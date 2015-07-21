@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>119 3js</title>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <script src="js/three.min.js"></script>
+    <!-- <script src="js/orbitControls.js"></script> -->
+    <script src="js/d3.js"></script>
+    <!-- <script src="js/main.js"></script> -->
+    <!-- <script src="js/sequences.js"></script> -->
+    <div id="main">
+        <div id="sequence"></div>
+        <div id="chart">
+            <div id="explanation" style="visibility: hidden;">
+                <span id="percentage"></span>
+                <br/> of my learning devoted to:
+            </div>
+        </div>
+    </div>
+
+
+    <div id="sidebar">
+        <input type="checkbox" id="togglelegend"> Legend
+        <br/>
+        <div id="legend" style="visibility: hidden;"></div>
+    </div>
+    <script type="text/javascript" src="js/skills.js"></script>
+    <script type="text/javascript">
+    // Hack to make this example display correctly in an iframe on bl.ocks.org
+    d3.select(self.frameElement).style("height", "700px");
+    </script>
+
+    <script type="text/javascript" src="js/timegraph.js"></script>
+    <form>
+        <label>
+            <input type="radio" name="mode" value="grouped"> Grouped</label>
+        <label>
+            <input type="radio" name="mode" value="stacked" checked> Stacked</label>
+    </form>
+</body>
+
+</html>
