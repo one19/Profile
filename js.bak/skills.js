@@ -50,28 +50,27 @@ var colors = {
 var totalSize = 0; 
 
 var vis = d3.select("#chart").append("svg:svg")
-    .attr("width", width)
-    .attr("height", height)
-    .append("svg:g")
-    .attr("id", "container")
-    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+            .attr("width", width)
+            .attr("height", height)
+            .append("svg:g")
+            .attr("id", "container")
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
 var partition = d3.layout.partition()
-    .size([2 * Math.PI, radius * radius])
-    .value(function(d) { return d.size; });
+                  .size([2 * Math.PI, radius * radius])
+                  .value(function(d) { return d.size; });
 
 var arc = d3.svg.arc()
-    .startAngle(function(d) { return d.x; })
-    .endAngle(function(d) { return d.x + d.dx; })
-    .innerRadius(function(d) { return Math.sqrt(d.y); })
-    .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
+            .startAngle(function(d) { return d.x; })
+            .endAngle(function(d) { return d.x + d.dx; })
+            .innerRadius(function(d) { return Math.sqrt(d.y); })
+            .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
 
 // Use d3.text and d3.csv.parseRows so that we do not need to have a header
 // row, and can receive the csv as an array of arrays.
 d3.text("skills.csv", function(text) {
   var csv = d3.csv.parseRows(text);
   var json = buildHierarchy(csv);
-  debugger;
   createVisualization(json);
 });
 
@@ -96,14 +95,14 @@ function createVisualization(json) {
       });
 
   var path = vis.data([json]).selectAll("path")
-      .data(nodes)
-      .enter().append("svg:path")
-      .attr("display", function(d) { return d.depth ? null : "none"; })
-      .attr("d", arc)
-      .attr("fill-rule", "evenodd")
-      .style("fill", function(d) { return colors[d.name]; })
-      .style("opacity", 1)
-      .on("mouseover", mouseover);
+                .data(nodes)
+                .enter().append("svg:path")
+                .attr("display", function(d) { return d.depth ? null : "none"; })
+                .attr("d", arc)
+                .attr("fill-rule", "evenodd")
+                .style("fill", function(d) { return colors[d.name]; })
+                .style("opacity", 1)
+                .on("mouseover", mouseover);
 
   // Add the mouseleave handler to the bounding circle.
   d3.select("#container").on("mouseleave", mouseleave);
@@ -133,13 +132,13 @@ function mouseover(d) {
 
   // Fade all the segments.
   d3.selectAll("path")
-      .style("opacity", 0.3);
+    .style("opacity", 0.3);
 
   // Then highlight only those that are an ancestor of the current segment.
   vis.selectAll("path")
       .filter(function(node) {
-                return (sequenceArray.indexOf(node) >= 0);
-              })
+        return (sequenceArray.indexOf(node) >= 0);
+      })
       .style("opacity", 1);
 }
 
@@ -159,8 +158,8 @@ function mouseleave(d) {
       .duration(1000)
       .style("opacity", 1)
       .each("end", function() {
-              d3.select(this).on("mouseover", mouseover);
-            });
+        d3.select(this).on("mouseover", mouseover);
+      });
 
   d3.select("#explanation")
       .style("visibility", "hidden");
@@ -209,22 +208,22 @@ function updateBreadcrumbs(nodeArray, percentageString) {
 
   // Data join; key function combines name and depth (= position in sequence).
   var g = d3.select("#trail")
-      .selectAll("g")
-      .data(nodeArray, function(d) { return d.name + d.depth; });
+            .selectAll("g")
+            .data(nodeArray, function(d) { return d.name + d.depth; });
 
   // Add breadcrumb and label for entering nodes.
   var entering = g.enter().append("svg:g");
 
   entering.append("svg:polygon")
-      .attr("points", breadcrumbPoints)
-      .style("fill", function(d) { return colors[d.name]; });
+          .attr("points", breadcrumbPoints)
+          .style("fill", function(d) { return colors[d.name]; });
 
   entering.append("svg:text")
-      .attr("x", (b.w + b.t) / 2)
-      .attr("y", b.h / 2)
-      .attr("dy", "0.35em")
-      .attr("text-anchor", "middle")
-      .text(function(d) { return d.name; });
+          .attr("x", (b.w + b.t) / 2)
+          .attr("y", b.h / 2)
+          .attr("dy", "0.35em")
+          .attr("text-anchor", "middle")
+          .text(function(d) { return d.name; });
 
   // Set position for entering and updating nodes.
   g.attr("transform", function(d, i) {
@@ -236,15 +235,15 @@ function updateBreadcrumbs(nodeArray, percentageString) {
 
   // Now move and update the percentage at the end.
   d3.select("#trail").select("#endlabel")
-      .attr("x", (nodeArray.length + 0.5) * (b.w + b.s))
-      .attr("y", b.h / 2)
-      .attr("dy", "0.35em")
-      .attr("text-anchor", "middle")
-      .text(percentageString);
+    .attr("x", (nodeArray.length + 0.5) * (b.w + b.s))
+    .attr("y", b.h / 2)
+    .attr("dy", "0.35em")
+    .attr("text-anchor", "middle")
+    .text(percentageString);
 
   // Make the breadcrumb trail visible, if it's hidden.
   d3.select("#trail")
-      .style("visibility", "");
+    .style("visibility", "");
 
 }
 
