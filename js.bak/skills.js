@@ -40,7 +40,7 @@ var colors = {
   "BassCSS": "#0074d9",
 
   "HTML": "#f93200",
-  "Chrome Webkit": "#508B88",
+  "Chrome Development Suite": "#508B88",
   "Haml": "#ECDFA7",
   "Modernizr": "#d91e76",
   "Handlebars": "#f15a24"
@@ -79,6 +79,8 @@ function createVisualization(json) {
 
   // Basic setup of page elements.
   initializeBreadcrumbTrail();
+  drawLegend();
+  d3.select("#togglelegend").on("click", toggleLegend);
 
   // Bounding circle underneath the sunburst, to make it easier to detect
   // when the mouse leaves the parent g.
@@ -114,7 +116,7 @@ function createVisualization(json) {
 function mouseover(d) {
 
   var percentage = (100 * d.value / totalSize).toPrecision(3);
-  var percentageString = percentage + "% \n " + d.name ;
+  var percentageString = percentage + "%";
   if (percentage < 0.1) {
     percentageString = "< 0.1%";
   }
@@ -180,7 +182,6 @@ function initializeBreadcrumbTrail() {
   var trail = d3.select("#sequence").append("svg:svg")
       .attr("width", width)
       .attr("height", 50)
-      .attr("class", "circleSVG")
       .attr("id", "trail");
   // Add the label at the end, for the percentage.
   trail.append("svg:text")
@@ -192,9 +193,9 @@ function initializeBreadcrumbTrail() {
 function breadcrumbPoints(d, i) {
   var points = [];
   points.push("0,0");
-  points.push( (b.w * 2.5) + ",0");
-  points.push( (b.w * 2.5) + b.t + "," + (b.h / 2));
-  points.push( (b.w * 2.5) + "," + b.h);
+  points.push(b.w + ",0");
+  points.push(b.w + b.t + "," + (b.h / 2));
+  points.push(b.w + "," + b.h);
   points.push("0," + b.h);
   if (i > 0) { // Leftmost breadcrumb; don't include 6th vertex.
     points.push(b.t + "," + (b.h / 2));
@@ -221,12 +222,12 @@ function updateBreadcrumbs(nodeArray, percentageString) {
           .attr("x", (b.w + b.t) / 2)
           .attr("y", b.h / 2)
           .attr("dy", "0.35em")
-          .attr("text-anchor", "left")
+          .attr("text-anchor", "middle")
           .text(function(d) { return d.name; });
 
   // Set position for entering and updating nodes.
   g.attr("transform", function(d, i) {
-    return "translate(" + i * ( (b.w * 2.5) + b.s) + ", 0)";
+    return "translate(" + i * (b.w + b.s) + ", 0)";
   });
 
   // Remove exiting nodes.
@@ -246,6 +247,47 @@ function updateBreadcrumbs(nodeArray, percentageString) {
 
 }
 
+function drawLegend() {
+
+  // Dimensions of legend item: width, height, spacing, radius of rounded rect.
+  var li = {
+    w: 75, h: 30, s: 3, r: 3
+  };
+
+  var legend = d3.select("#legend").append("svg:svg")
+      .attr("width", li.w)
+      .attr("height", d3.keys(colors).length * (li.h + li.s));
+
+  var g = legend.selectAll("g")
+      .data(d3.entries(colors))
+      .enter().append("svg:g")
+      .attr("transform", function(d, i) {
+              return "translate(0," + i * (li.h + li.s) + ")";
+           });
+
+  g.append("svg:rect")
+      .attr("rx", li.r)
+      .attr("ry", li.r)
+      .attr("width", li.w)
+      .attr("height", li.h)
+      .style("fill", function(d) { return d.value; });
+
+  g.append("svg:text")
+      .attr("x", li.w / 2)
+      .attr("y", li.h / 2)
+      .attr("dy", "0.35em")
+      .attr("text-anchor", "middle")
+      .text(function(d) { return d.key; });
+}
+
+function toggleLegend() {
+  var legend = d3.select("#legend");
+  if (legend.style("visibility") == "hidden") {
+    legend.style("visibility", "");
+  } else {
+    legend.style("visibility", "hidden");
+  }
+}
 
 // Take a 2-column CSV and transform it into a hierarchical structure suitable
 // for a partition layout. The first column is a sequence of step names, from
